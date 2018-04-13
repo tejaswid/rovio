@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<launch>
+    <node pkg="rovio" type="rovio_node" name="rovio" output="screen">
+      <param name="filter_config" value="/home/drzadmin/rovio_space/src/rovio/cfg/rovio_custom_zr300_down.info"/>
+      <param name="camera0_config" value="/home/drzadmin/rovio_space/src/rovio/cfg/zr300_fisheye.yaml"/>
+      <param name="world_frame" value="odom"/>
+      <param name="map_frame" value="tag_map"/>
+      <param name="record_transform" value="false" />
+      <param name="capability_group" value="Rovio" />
+
+      <remap from="imu0" to="imu/raw"/>
+      <remap from="cam0/image_raw" to="fisheye/fisheye"/>
+      <remap from="odometry" to="/T_G_C"/>
+    </node>
+
+  <node pkg="tf" type="static_transform_publisher" name="odom_broadcaster" args="0 0 0 0 0 0 1 world tag_map 100" />
+
+</launch>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<launch>
+  <arg name="mav_name" default="blackbird"/>
+  <arg name="namespace" default="$(arg mav_name)" />
+  <arg name="cam_namespace" default="uvc_camera" />
+  <arg name="tag_size" default="0.0985" />
+
+  
+  <!-- AprilTags Localization -->
+  <group ns="$(arg cam_namespace)" >  
+    <node name="image_undistort_node" pkg="image_undistort" type="image_undistort_node" output="screen" clear_params="true">
+      <param name="input_camera_info_from_ros_params" value = "true"/>
+      <param name="input_camera_namespace" value="cam_0"/>
+      <rosparam file="$(find mav_startup)/parameters/mavs/$(arg mav_name)/apriltags/camchain-downward.yaml"/>
+      <remap from="input/image" to="cam_0/image_raw"/>
+
+      <param name = "scale" value="1.0"/>
+      <param name = "output_camera_info_from_yaml" value = "true"/>
+      <param name = "relative_camera_topic" value = "true " />
+      <param name = "queue_size" value = "100"/>
+      <param name = "process_image" value = "true"/>
+      <param name = "undistort_image" value = "true"/>
+      <param name = "process_every_nth_frame" value = "1"/>
+    </node>
+
+    <node name="apriltag_localization" pkg="apriltag_localization" type="apriltag_localization_node" output="screen" clear_params="true" args="--alsologtostderr">
+      <param name="tag_size" value="$(arg tag_size)" />
+      <param name="map_filename" value="$(find mav_startup)/parameters/mavs/$(arg mav_name)/apriltags/tags.yaml" />
+      <param name="global_frame_id" value="tag_map" />
+      <remap from="image_rect" to="output/image" />
+      <remap from="camera_info" to="output/camera_info" />
+    </node>
+  </group>
+  
+  <!-- Run Rviz-->
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find mav_startup)/launch/$(arg mav_name)/conf.rviz" />
+
+  <node pkg="rosbag" type="record" name="paintcopter_bag"
+     args="-b 0 --duration=15m -a -o /media/paintcopter/DATA/pc_test -x /camera/ir(.*) /camera/depth/points" />
+     
+</launch>

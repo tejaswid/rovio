@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="ISO-8859-15"?>
+<launch>
+  <arg name="mav_name" default="blackbird"/>
+  <arg name="namespace" default="$(arg mav_name)" />
+
+  <rosparam file="$(find mav_startup)/parameters/capabilities.yaml"/>
+
+  <!-- servo spray control -->
+  <node name="servo_control" pkg="rosserial_python" type="serial_node.py"
+       args="/dev/ttyACM1 _baud:=9600"
+       output="screen" />
+
+  <!-- Domi VI sensor -->
+  <node pkg="uvc_ros_driver" name="uvc_camera" type="uvc_ros_driver_node" output="screen">
+    <param name="flip" type="bool"  value="false" />
+    <param name="numberOfCameras" type="int"  value="1" />
+    <param name="AITMsgs" type="bool"  value="false" />
+    <param name="setCalibration" type="bool"  value="true" />
+    <param name="calibrationMode" type="bool"  value="0" />
+    <param name="depthMap" type="bool"  value="false" />
+    <param name="cameraConfig" type="int"  value="1" />
+    <param name="cameraConfigFile" type="string"  value="$(find mav_startup)/parameters/mavs/$(arg mav_name)/camera/domi_downward_calibration.yaml" />
+    <param name="capability_group" value="Camera" />
+    <rosparam command="load" file="$(find mav_startup)/parameters/mavs/$(arg mav_name)/camera/homography_mapping.yaml" />
+  </node>
+
+  <!-- Run FastGlobalRegistrationNode -->
+  <node  name="fgr_node" pkg="fast_global_registration" 
+  type="FastGlobalRegistrationNode" clear_params="true" output="screen" 
+  args="--v=2 --minloglevel=0 --alsologtostderr=true">     
+        <rosparam file="$(find fast_global_registration)/Params.yaml"/>
+  </node>
+
+    <node pkg="rovio" type="rovio_node" name="rovio" output="screen">
+      <param name="filter_config" value="$(find mav_startup)/parameters/mavs/$(arg mav_name)/rovio/rovio_custom_domi_downward.info"/>
+      <param name="camera0_config" value="$(find mav_startup)/parameters/mavs/$(arg mav_name)/rovio/domi_downward_cam0.yaml"/>
+      <param name="camera1_config" value="$(find mav_startup)/parameters/mavs/$(arg mav_name)/rovio/domi_downward_cam1.yaml"/>
+      <param name="world_frame" value="odom"/>
+      <param name="map_frame" value="tag_map"/>
+      <param name="record_transform" value="false" />
+      <param name="capability_group" value="Rovio" />
+
+      <remap from="imu0" to="/uvc_camera/cam_0/imu"/>
+      <remap from="cam0/image_raw" to="/uvc_camera/cam_0/image_raw"/>
+      <remap from="cam1/image_raw" to="/uvc_camera/cam_0/image_raw"/>
+      <remap from="odometry" to="/uvc_camera/T_G_C"/>
+    </node>
+
+    <node name="pose_sensor_rovio" pkg="msf_updates" type="pose_sensor" clear_params="true" output="screen">
+       <remap from="msf_core/imu_state_input" to="imu" />
+       <remap from="msf_updates/transform_input" to="rovio/transform" />
+       <param name="core/msf_output_frame" value="odom" />
+        <rosparam file="$(find mav_startup)/parameters/mavs/$(arg mav_name)/msf_parameters_vision.yaml"/>
+       <param name="capability_group" value="Sensor Fusion" />
+    </node>
+  
+  </group>
+
+  <node pkg="tf" type="static_transform_publisher" name="odom_broadcaster" args="0 0 0 0 0 0 1 world tag_map 100" />
+
+</launch>

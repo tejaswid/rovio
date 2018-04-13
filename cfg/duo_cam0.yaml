@@ -1,0 +1,13 @@
+###### Camera Calibration File For Cam 0 (left) of Duo On the Capture rig - 23.08.2017 ######
+image_width: 752
+image_height: 480
+camera_name: cam0
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [380.8349848062141, 0.0, 379.48532188940254, 0.0, 379.71175318795355, 242.60792923131112, 0.0, 0.0, 1.0]
+distortion_model: equidistant
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data:  [-0.0688361943905366, -0.23474664476298296, 0.41031371621299617, -0.25056680475511117, 0.0]
