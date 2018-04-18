@@ -126,25 +126,44 @@ class RovioNode{
   std::mutex m_filter_;
 
   // Nodes, Subscriber, Publishers
+  /// node handle
   ros::NodeHandle nh_;
+  /// private node handle
   ros::NodeHandle nh_private_;
+  /// subscriber to the IMU message
   ros::Subscriber subImu_;
+  /// subscriber to image 0
   ros::Subscriber subImg0_;
+  /// subscriber to image 1
   ros::Subscriber subImg1_;
+  /// subscriber to ground truth pose
   ros::Subscriber subGroundtruth_;
+  /// subscriber to ground truth odometry
   ros::Subscriber subGroundtruthOdometry_;
   ros::Subscriber subVelocity_;
+  /// service that resets the state of rovio
   ros::ServiceServer srvResetFilter_;
+  /// service that..... \todo fill this
   ros::ServiceServer srvResetToPoseFilter_;
+  /// odometry message publisher
   ros::Publisher pubOdometry_;
+  /// tf publisher
   ros::Publisher pubTransform_;
+  /// publisher for pose with covariance stamp
   ros::Publisher pubPoseWithCovStamped_;
+  /// publisher for the transform from ... to global frame ? \todo fill this
   ros::Publisher pub_T_J_W_transform;
+  /// transform broascaster for broadcasting tf
   tf::TransformBroadcaster tb_;
+  /// publisher for publishing landmarks
   ros::Publisher pubPcl_;            /**<Publisher: Ros point cloud, visualizing the landmarks.*/
+  /// publisher for patch data
   ros::Publisher pubPatch_;            /**<Publisher: Patch data.*/
+  /// publisher for line markers indicating the depth uncertainity of a landmark
   ros::Publisher pubMarkers_;          /**<Publisher: Ros line marker, indicating the depth uncertainty of a landmark.*/
+  /// publisher for extrinsics
   ros::Publisher pubExtrinsics_[mtState::nCam_];
+  /// publisher for imu biases
   ros::Publisher pubImuBias_;
 
   // Ros Messages
