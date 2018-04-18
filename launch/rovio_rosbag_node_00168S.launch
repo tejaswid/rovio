@@ -3,11 +3,11 @@
 	<!-- launch the rovio rosbag loader node -->
   	<node pkg="rovio" type="rovio_rosbag_loader" name="rovio" output="screen">
   		<!-- filter configuration. the .info file-->
-  		<param name="filter_config" value="$(find rovio)/cfg/rovio_custom_zr300_down.info"/>
+  		<param name="filter_config" value="$(find rovio)/cfg/rovio_custom_zr300_00168S.info"/>
   		<!-- camera intrinsics file. the .yaml file -->
-  		<param name="camera0_config" value="$(find rovio)/cfg/zr300_fisheye.yaml"/>
+  		<param name="camera0_config" value="$(find rovio)/cfg/zr300_00168S.yaml"/>
   		<!-- the bag file to load. the .bag file -->
-  		<param name="rosbag_filename" value="/media/drzadmin/DATA/Projects/Tree_Scanning/drz_rig_tejaswi/calib/cinema_plant/cinema_plant.bag"/>
+  		<param name="rosbag_filename" value="/media/drzadmin/DATA/Projects/Tree_Scanning/drz_rig_tejaswi/calib/apriltag_45_test/2018-04-10-19-57-02.bag"/>
   		<!-- name of the imu topic -->
   		<param name="imu_topic_name" value="/imu/raw"/>
   		<!-- name of the camera 0 topic -->

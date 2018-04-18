@@ -1,19 +1,19 @@
 Common
 {
-	doVECalibration true;		Should the camera-IMU extrinsics be calibrated online
+	doVECalibration false;		Should the camera-IMU extrinsics be calibrated online
 	depthType 1;				Type of depth parametrization (0: normal, 1: inverse depth, 2: log, 3: hyperbolic)
 	verbose false;				Is the verbose active
 }
 Camera0
 {
-	CalibrationFile ;												Camera-Calibration file for intrinsics
-	qCM_x  -0.000944226144;										X-entry of IMU to Camera quaterion (Hamilton)
-	qCM_y  0.0024647920124;										Y-entry of IMU to Camera quaterion (Hamilton)
-	qCM_z  0.000868875857363;										Z-entry of IMU to Camera quaterion (Hamilton)
-	qCM_w  0.99999613913;											W-entry of IMU to Camera quaterion (Hamilton)
-	MrMC_x -0.00326484;										X-entry of IMU to Camera vector (expressed in IMU CF) [m]
-	MrMC_y 0.00947341;										Y-entry of IMU to Camera vector (expressed in IMU CF) [m]
-	MrMC_z -0.0070149;										Z-entry of IMU to Camera vector (expressed in IMU CF) [m]
+	CalibrationFile ;										Camera-Calibration file for intrinsics
+	qCM_x  -0.0045941412678795;								X-entry of IMU to Camera quaterion (Hamilton)
+	qCM_y  0.00045530033160222;								Y-entry of IMU to Camera quaterion (Hamilton)
+	qCM_z  0.00144451439968535;								Z-entry of IMU to Camera quaterion (Hamilton)
+	qCM_w  0.9999882999044378;								W-entry of IMU to Camera quaterion (Hamilton)
+	MrMC_x -0.00615241;										X-entry of IMU to Camera vector (expressed in IMU CF) [m]
+	MrMC_y 0.01296431;										Y-entry of IMU to Camera vector (expressed in IMU CF) [m]
+	MrMC_z 0.00328362;										Z-entry of IMU to Camera vector (expressed in IMU CF) [m]
 }
 Init
 {
@@ -163,12 +163,12 @@ PoseUpdate
 {
     UpdateNoise
     {
-        pos_0 1e-3;             X-Covariance of linear pose measurement update [m^2]
-        pos_1 1e-3;             Y-Covariance of linear pose measurement update [m^2]
-        pos_2 1e-3;             Z-Covariance of linear pose measurement update [m^2]
-        att_0 1e-3;             X-Covariance of rotational pose measurement update [rad^2]
-        att_1 1e-3;             Y-Covariance of rotational pose measurement update [rad^2]
-        att_2 1e-3;             Z-Covariance of rotational pose measurement update [rad^2]
+        pos_0 1e-6;             X-Covariance of linear pose measurement update [m^2]
+        pos_1 1e-6;             Y-Covariance of linear pose measurement update [m^2]
+        pos_2 1e-6;             Z-Covariance of linear pose measurement update [m^2]
+        att_0 1e-6;             X-Covariance of rotational pose measurement update [rad^2]
+        att_1 1e-6;             Y-Covariance of rotational pose measurement update [rad^2]
+        att_2 1e-6;             Z-Covariance of rotational pose measurement update [rad^2]
     }
 	init_cov_IrIW 0.5;              Covariance of initial pose between inertial frames, linear part [m^2]
     init_cov_qWI 0.5;               Covariance of initial pose between inertial frames, rotational part [rad^2]
@@ -178,7 +178,7 @@ PoseUpdate
     pre_cov_qWI 5e-3;             Covariance parameter of pose between inertial frames, rotational part [rad^2/s]
     pre_cov_MrMV 0.0;              Covariance parameter of pose between inertial frames, linear part [m^2/s]
     pre_cov_qVM 0.0;             Covariance parameter of pose between inertial frames, rotational part [rad^2/s]
-    MahalanobisTh0 10000000000.6511204;      this was set to  10000000000000.6511204   Mahalonobis distance treshold of pose measurement
+    MahalanobisTh0 1.6511204;      this was set to  10000000000000.6511204   Mahalonobis distance treshold of pose measurement
     doVisualization true;            Should the measured poses be vizualized
     enablePosition true;            Should the linear part be used during the update
     enableAttitude true;            Should the rotation part be used during the update (e.g. set to fals eif feeding GPS-measurement)
@@ -186,13 +186,13 @@ PoseUpdate
     doInertialAlignmentAtStart true;      Should the transformation between I and W be explicitly computed and set with the first pose measurement.
     timeOffset 0.4;               Time offset added to the pose measurement timestamps
     useOdometryCov true; Should the UpdateNoise position covariance be scaled using the covariance in the Odometry message
-    qVM_x -0.000944226144;						X-entry of quaterion representing IMU to reference body coordinate frame of pose measurement (Hamilton)
-    qVM_y 0.0024647920124;					Y-entry of quaterion representing IMU to reference body coordinate frame of pose measurement (Hamilton)
-    qVM_z 0.000868875857363;						Z-entry of quaterion representing IMU to reference body coordinate frame of pose measurement (Hamilton)
-    qVM_w 0.99999613913;						W-entry of quaterion representing IMU to reference body coordinate frame of pose measurement (Hamilton)
-    MrMV_x -0.00326484;						X-entry of vector representing IMU to reference body coordinate frame of pose measurement
-    MrMV_y 0.00947341;					Y-entry of vector representing IMU to reference body coordinate frame of pose measurement
-    MrMV_z -0.0070149;					Z-entry of vector representing IMU to reference body coordinate frame of pose measurement
+    qVM_x -0.0045941412678795;						X-entry of quaterion representing IMU to reference body coordinate frame of pose measurement (Hamilton)
+    qVM_y 0.00045530033160222;					Y-entry of quaterion representing IMU to reference body coordinate frame of pose measurement (Hamilton)
+    qVM_z 0.00144451439968535;						Z-entry of quaterion representing IMU to reference body coordinate frame of pose measurement (Hamilton)
+    qVM_w 0.9999882999044378;						W-entry of quaterion representing IMU to reference body coordinate frame of pose measurement (Hamilton)
+    MrMV_x -0.00615241;						X-entry of vector representing IMU to reference body coordinate frame of pose measurement
+    MrMV_y 0.01296431;					Y-entry of vector representing IMU to reference body coordinate frame of pose measurement
+    MrMV_z 0.00328362;					Z-entry of vector representing IMU to reference body coordinate frame of pose measurement
     qWI_x 0.0;									X-entry of quaterion representing World to reference inertial coordinate frame of pose measurement (Hamilton
     qWI_y 0.0;									Y-entry of quaterion representing World to reference inertial coordinate frame of pose measurement (Hamilton)
     qWI_z 0.0;									Z-entry of quaterion representing World to reference inertial coordinate frame of pose measurement (Hamilton)
