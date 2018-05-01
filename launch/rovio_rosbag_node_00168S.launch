@@ -1,18 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?> 
 <launch>
-	<!-- launch the rovio rosbag loader node -->
-  	<node pkg="rovio" type="rovio_rosbag_loader" name="rovio" output="screen">
-  		<!-- filter configuration. the .info file-->
-  		<param name="filter_config" value="$(find rovio)/cfg/rovio_custom_zr300_00168S.info"/>
-  		<!-- camera intrinsics file. the .yaml file -->
-  		<param name="camera0_config" value="$(find rovio)/cfg/zr300_00168S.yaml"/>
-  		<!-- the bag file to load. the .bag file -->
-  		<param name="rosbag_filename" value="/media/drzadmin/DATA/Projects/Tree_Scanning/drz_rig_tejaswi/calib/apriltag_45_test/2018-04-10-19-57-02.bag"/>
-  		<!-- name of the imu topic -->
-  		<param name="imu_topic_name" value="/imu/raw"/>
-  		<!-- name of the camera 0 topic -->
-  		<param name="cam0_topic_name" value="/fisheye/fisheye"/>
-  		<!-- name of the camera 1 topic -->
-  		<param name="cam1_topic_name" value="/duo3d/right/image_raw"/>
-  	</node>
+    <!-- Set sim time to true -->
+    <param name="use_sim_time" value="true" />
+
+    <!-- User specified arguments -->
+    <!-- ************************ -->
+    <!-- **** ROVIO specific **** -->
+    <!-- ************************ -->
+    <!-- filter configuration. the .info file-->
+    <arg name="filter_config_file" value="$(find rovio)/cfg/rovio_custom_zr300_00168S.info"/>
+    <!-- camera intrinsics file. the .yaml file - try to get rid of this and use the calib_path instead -->
+    <arg name="cam0_config" value="$(find rovio)/cfg/zr300_00168S.yaml"/>
+    <!-- the bag file to load. the .bag file -->
+    <arg name="rosbag_file" default="/media/drzadmin/DATA/Projects/Tree_Scanning/drz_rig_tejaswi/calib/apriltag_45_test/2018-04-10-19-57-02.bag"/>
+    <!-- name of the imu topic -->
+    <arg name="imu_topic" default="/imu/raw"/>
+    <!-- name of the camera 0 topic -->
+    <arg name="cam0_topic" default="/fisheye/fisheye"/>
+    <!-- name of the camera 1 topic -->
+    <arg name="cam1_topic" default="nothing"/>
+    <!-- name of the tags frame -->
+    <arg name="map_frame_name" default="tag_map"/>
+    <!-- name of the inertial frame where the first frame is captured. Rovio pose is wrt this frame -->
+    <arg name="world_frame_name" default="rovio_world"/>
+    <!-- name of the inertial frame attached to the camera -->
+    <arg name="camera_frame_name" default="rovio_camera"/>
+    <!-- name of the inertial frame attached to the imu -->
+    <arg name="imu_frame_name" default="rovio_imu"/>
+
+    <!-- **************************** -->
+    <!-- **** Apriltags specific **** -->
+    <!-- **************************** -->
+    <!-- Size of the tags -->
+    <arg name="tag_length" value="0.12"/>
+    <!-- Tag family -->
+    <arg name="tag_family_name" value="tag36h11"/>
+    <!-- Border size for the tag family -->
+    <arg name="border_length" value="1"/>
+    <!-- Number of CPU threads to use for detection -->
+    <arg name="cpu_threads" default="8"/>
+    <!-- Factor by which the input image has to be decimated -->
+    <arg name="decimate_factor" default="1.0"/>
+    <!-- Sigma of a Gaussian Low pass filter to be applied -->
+    <arg name="gaussian_sigma" default="0.0"/>
+    <!-- Flag indicating if more time has to be spent trying to align tags -->
+    <arg name="flag_refine_edges" default="true"/>
+    <!-- Flag indicating if more time has to be spent trying to decode tags -->
+    <arg name="flag_refine_decode" default="false"/>
+    <!-- Flag indicating if more time has to be spent trying to precisely localize tags -->
+    <arg name="flag_refine_pose" default="true"/>
+    <!-- Flag to set or unset debug output -->
+    <arg name="flag_debug" default="false"/>
+    <!-- Flag to set or unset quiet mode for reduced output -->
+    <arg name="flag_quiet" default="false"/>
+    <!-- Tag map ground truth file -->
+    <arg name="map_file" value="/media/drzadmin/DATA/Projects/Tree_Scanning/drz_rig_tejaswi/apriltag_test/tag_map_trees_cinema.yaml"/>
+    <!-- Delay to add to the timestamp-->
+    <arg name="delay_output_timestamps" default="0.0" />
+    <!-- Scaling factor for standard deviation -->
+    <arg name="sd_scale_factor" default="2.0" />
+
+    <!-- ************************************** -->
+    <!-- **** Camera Undistortion specific **** -->
+    <!-- ************************************** -->
+    <!-- Camera Intrinsics - this is output of Kalibr -->
+    <arg name="calib_path" default="/home/drzadmin/repos/src/drz-vision-common/calib_files/zr300/00168S/camchain-imucam-fisheye.yaml" />
+    <!-- Namespace of the input camera - if you use Kalibr to calibrate, this is the first line in the YAML file. -->
+    <arg name="input_camera_ns" default="cam0" />
+
+    <!-- NODES -->
+    <!-- Node broadcasting a static identity transform between the world frame and tag_map frame-->
+    <node pkg="tf" type="static_transform_publisher" name="odom_broadcaster" args="0 0 0 0 0 0 1 world tag_map 100" />
+
+    <!-- launch the rovio rosbag loader node -->
+    <node pkg="rovio" type="rovio_rosbag_loader" name="rovio" output="screen">
+        <!-- Rovio specific parameters-->
+        <param name="filter_config" value="$(arg filter_config_file)"/>
+        <param name="camera0_config" value="$(arg cam0_config)"/>
+        <param name="rosbag_filename" value="$(arg rosbag_file)"/>
+        <param name="imu_topic_name" value="$(arg imu_topic)"/>
+        <param name="cam0_topic_name" value="$(arg cam0_topic)"/>
+        <param name="cam1_topic_name" value="$(arg cam1_topic)"/>
+        <param name="map_frame" value="$(arg map_frame_name)"/>
+        <param name="world_frame" value="$(arg world_frame_name)"/>
+        <param name="camera_frame" value="$(arg camera_frame_name)"/>
+        <param name="imu_frame" value="$(arg imu_frame_name)"/>
+
+        <!-- Tag detection parameters -->
+        <param name="tag_size" value="$(arg tag_length)" />
+        <param name="tag_family" type="str" value="$(arg tag_family_name)"/>
+        <param name="border_size" type="int" value="$(arg border_length)"/>
+        <param name="num_threads" type="int" value="$(arg cpu_threads)"/>
+        <param name="decimate" type="double" value="$(arg decimate_factor)"/>
+        <param name="blur" type="double" value="$(arg gaussian_sigma)"/>
+        <param name="refine_edges" type="bool" value="$(arg flag_refine_edges)"/>
+        <param name="refine_decode" type="bool" value="$(arg flag_refine_decode)"/>
+        <param name="refine_pose" type="bool" value="$(arg flag_refine_pose)"/>
+        <param name="debug" type="bool" value="$(arg flag_debug)"/>
+        <param name="quiet" type="bool" value="$(arg flag_quiet)"/>
+        <param name="map_filename" type="str" value="$(arg map_file)"/>
+        <param name="output_timestamps_delay" value="$(arg delay_output_timestamps)" />
+        <param name="sd_scaling_factor" value="$(arg sd_scale_factor)" />
+
+        <!-- Camera Calibration parameters -->
+        <rosparam file="$(arg calib_path)"/>
+        <!-- input camera namespace -->
+        <param name="input_camera_namespace" type="str" value="$(arg input_camera_ns)"/>
+
+    </node>
 </launch>

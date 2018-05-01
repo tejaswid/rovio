@@ -28,4 +28,7 @@
   <depend>tf</depend>
   <depend>rosbag</depend>
   <depend>yaml_cpp_catkin</depend>
+  <depend>apriltags2_localization</depend>
+  <depend>image_transport</depend>
+  <depend>image_undistort</depend>
 </package>

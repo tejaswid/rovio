@@ -63,8 +63,8 @@ ImgUpdate
 	maxNumIteration 20;
     doPatchWarping true;										Should the patches be warped
     doFrameVisualisation true;									Should the frames be visualized
-    visualizePatches false;										Should the patches be visualized
-    useDirectMethod true;										Should the EKF-innovation be based on direct intensity error (o.w. reprojection error)
+    visualizePatches true;										Should the patches be visualized
+    useDirectMethod true ;										Should the EKF-innovation be based on direct intensity error (o.w. reprojection error)
     startLevel 2;												Highest patch level which is being employed (must be smaller than the hardcoded template parameter)
     endLevel 1;													Lowest patch level which is being employed
     nDetectionBuckets 100;										Number of discretization buckets used during the candidates selection
@@ -124,7 +124,7 @@ ImgUpdate
             vel_1 0.01;											Y-Covariance of zero velocity update [m^2/s^2]
             vel_2 0.01;											Z-Covariance of zero velocity update [m^2/s^2]
         }
-        MahalanobisTh0 7.689997599999999;						Mahalanobid distance for zero velocity updates
+        MahalanobisTh0 7.689997599999999;						Mahalanobis distance for zero velocity updates
         minNoMotionTime 1.0;									Min duration of no-motion
         isEnabled 1;											Should zero velocity update be applied, only works if MotionDetection.isEnabled is true
     }
@@ -182,7 +182,7 @@ PoseUpdate
     doVisualization true;            Should the measured poses be vizualized
     enablePosition true;            Should the linear part be used during the update
     enableAttitude true;            Should the rotation part be used during the update (e.g. set to fals eif feeding GPS-measurement)
-    noFeedbackToRovio false;           By default the pose update is only used for aligning coordinate frame. Set to false if ROVIO should benefit frome the posed measurements.
+    noFeedbackToRovio true;           By default the pose update is only used for aligning coordinate frame. Set to false if ROVIO should benefit frome the posed measurements.
     doInertialAlignmentAtStart true;      Should the transformation between I and W be explicitly computed and set with the first pose measurement.
     timeOffset 0.4;               Time offset added to the pose measurement timestamps
     useOdometryCov true; Should the UpdateNoise position covariance be scaled using the covariance in the Odometry message
